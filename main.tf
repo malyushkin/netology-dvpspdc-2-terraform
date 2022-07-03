@@ -23,8 +23,8 @@ data "aws_ami" "ubuntu" {
 # Instance Resources
 resource "aws_instance" "web" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = local.web_instance_type_map[terraform.workspace]
-  count         = local.web_count_map[terraform.workspace]
+  instance_type = t3.micro
+  count         = 1
 
   cpu_core_count       = 1
   cpu_threads_per_core = 1
@@ -39,39 +39,4 @@ resource "aws_instance" "web" {
     create_before_destroy = true
   }
 
-}
-
-resource "aws_instance" "web_with_for_each_expr" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = local.web_instance_type_map[terraform.workspace]
-
-  for_each = local.web_vm_map[terraform.workspace]
-
-  monitoring = true
-
-  tags = {
-    org  = "netology"
-    name = "ubuntu_instance"
-  }
-}
-
-# S3 Bucket resource
-resource "aws_s3_bucket" "terraform_state" {
-  bucket = "romanmaliushkin-netology-terraform-state"
-
-  versioning {
-    enabled = true
-  }
-}
-
-# DynamoDB Table resource
-resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "terraform-lock"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "LockID"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
 }
