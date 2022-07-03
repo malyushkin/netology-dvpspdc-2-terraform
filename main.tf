@@ -23,7 +23,7 @@ data "aws_ami" "ubuntu" {
 # Instance Resources
 resource "aws_instance" "web" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = t3.micro
+  instance_type = "t3.micro"
   count         = 1
 
   cpu_core_count       = 1
